@@ -10,6 +10,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.weatherfit.ui.home.HomeScreen
+import com.example.weatherfit.ui.navigation.WeatherFitNavHost
 import com.example.weatherfit.ui.theme.WeatherFitTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,27 +21,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WeatherFitTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Local Ui Branch")
+                    WeatherFitNavHost(navController = rememberNavController())
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WeatherFitTheme {
-        Greeting("Android")
     }
 }

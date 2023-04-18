@@ -18,11 +18,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
 
+// 목적 체형 선호하는 스타일 enum class로 묶기
 
 @Composable
-fun ProfileSettingScreen(modifier: Modifier = Modifier) {
+fun ProfileSettingScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ProfileSettingViewModel = viewModel(
+        factory = ProfileSettingViewModel.Factory
+    ),
+) {
     Column() {
         UserProfileScreen()
         UserClothStyleScreen()
@@ -195,7 +202,8 @@ fun IconSelectorScreen(
                     .selectable(
                         selected = (selectedButton == index),
                         onClick = { selectedButton = index }
-                    ).padding(horizontal = 5.dp),
+                    )
+                    .padding(horizontal = 5.dp),
                 shape = CircleShape,
                 border = if (selectedButton == index) BorderStroke(
                     2.dp,

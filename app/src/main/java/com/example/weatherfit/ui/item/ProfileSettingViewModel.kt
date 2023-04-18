@@ -14,9 +14,7 @@ import kotlinx.coroutines.launch
 class ProfileSettingViewModel(private val userProfileRepository: UserProfileRepository) :
     ViewModel() {
 
-    val uiState: StateFlow<UserProfileUiState> = userProfileRepository.userProfile.map {
-        UserProfileUiState(it.name, it.age, it.sex, it.purpose, it.bodyType, it.preferredStyle)
-    }.stateIn(
+    val uiState: StateFlow<UserProfileUiState> = userProfileRepository.userProfile.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = UserProfileUiState()

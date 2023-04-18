@@ -28,16 +28,62 @@ fun ProfileSettingScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileSettingViewModel = viewModel(
         factory = ProfileSettingViewModel.Factory
-    ),
+    )
 ) {
+    ProfileSettingScreen(
+        uiState = viewModel.uiState.collectAsState().value,
+        saveUserProfilePreference = viewModel::saveUserProfilePreference,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ProfileSettingScreen(
+    uiState: UserProfileUiState,
+    saveUserProfilePreference: (UserProfileUiState) -> Unit,
+    modifier: Modifier
+) {
+    var textFiledName by remember { mutableStateOf(uiState.name) }
+    var textFiledAge by remember { mutableStateOf(uiState.age) }
+    var selectedSexOption by remember { mutableStateOf(uiState.sex) }
+
+
+//     처음 name,age의 값은 빈 값이 들어온 직후 uiState: StateFlow<UserProfileUiState>가 불러온 dataStore의
+//     값으로 변경되는데 그때 textFiledName의 값을 name으로 받기 위함
+    LaunchedEffect(uiState.name) {
+        textFiledName = uiState.name
+    }
+
+    LaunchedEffect(uiState.age) {
+        textFiledAge = uiState.age
+    }
+
+    LaunchedEffect(uiState.sex) {
+        selectedSexOption = uiState.sex
+    }
+
     Column() {
-        UserProfileScreen()
+        UserProfileScreen(
+            textFiledName,
+            onNameValueChange = { textFiledName = it },
+            textFiledAge,
+            onAgeValueChange = { textFiledAge = it },
+            selectedSexOption,
+            onSexValueChange = { selectedSexOption = it }
+        )
         UserClothStyleScreen()
     }
 }
 
 @Composable
-fun UserProfileScreen() {
+fun UserProfileScreen(
+    name: String,
+    onNameValueChange: (String) -> Unit,
+    age: String,
+    onAgeValueChange: (String) -> Unit,
+    sex: String,
+    onSexValueChange: (String) -> Unit
+) {
     Column() {
         Row(
             modifier = Modifier
@@ -75,8 +121,8 @@ fun UserProfileScreen() {
         }
         Row() {
             TextField(
-                value = "장세종",
-                onValueChange = { it },
+                value = name,
+                onValueChange = onNameValueChange,
                 modifier = Modifier
                     .weight(1f),
                 textStyle = TextStyle(textAlign = TextAlign.Center),
@@ -89,8 +135,8 @@ fun UserProfileScreen() {
                 )
             )
             TextField(
-                value = "24",
-                onValueChange = { it },
+                value = age,
+                onValueChange = onAgeValueChange,
                 modifier = Modifier.weight(1f),
                 textStyle = TextStyle(textAlign = TextAlign.Center),
                 colors = TextFieldDefaults.textFieldColors(
@@ -101,21 +147,30 @@ fun UserProfileScreen() {
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-            SexDropDownMenu(modifier = Modifier.weight(1f))
+            SexDropDownMenu(
+                modifier = Modifier.weight(1f),
+                sex = sex,
+                onSexValueChange = onSexValueChange
+            )
         }
     }
-
 }
 
 @Composable
-fun SexDropDownMenu(modifier: Modifier) {
+fun SexDropDownMenu(
+    modifier: Modifier,
+    sex: String,
+    onSexValueChange: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("남자") }
+
+
     val options = listOf("남자", "여자")
 
     Column(modifier = modifier) {
+
         Text(
-            text = selectedOption,
+            text = sex,
             modifier = Modifier
                 .clickable { expanded = true }
                 .padding(16.dp)
@@ -127,10 +182,7 @@ fun SexDropDownMenu(modifier: Modifier) {
             onDismissRequest = { expanded = false },
         ) {
             options.forEach { option ->
-                DropdownMenuItem(onClick = {
-                    selectedOption = option
-                    expanded = false
-                }) {
+                DropdownMenuItem(onClick = { onSexValueChange(option) }) {
                     Text(text = option)
                 }
             }

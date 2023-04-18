@@ -1,5 +1,7 @@
 package com.example.weatherfit.ui.item
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,11 +30,13 @@ fun ProfileSettingScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileSettingViewModel = viewModel(
         factory = ProfileSettingViewModel.Factory
-    )
+    ),
+    context: Context
 ) {
     ProfileSettingScreen(
         uiState = viewModel.uiState.collectAsState().value,
         saveUserProfilePreference = viewModel::saveUserProfilePreference,
+        context,
         modifier = modifier
     )
 }
@@ -41,6 +45,7 @@ fun ProfileSettingScreen(
 fun ProfileSettingScreen(
     uiState: UserProfileUiState,
     saveUserProfilePreference: (UserProfileUiState) -> Unit,
+    context: Context,
     modifier: Modifier
 ) {
     var textFiledName by remember { mutableStateOf(uiState.name) }
@@ -72,6 +77,21 @@ fun ProfileSettingScreen(
             onSexValueChange = { selectedSexOption = it }
         )
         UserClothStyleScreen()
+        Spacer(modifier = Modifier.weight(1f))
+        Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.LightGray,
+        ), onClick = {
+            saveUserProfilePreference(
+                UserProfileUiState(
+                    textFiledName,
+                    textFiledAge,
+                    selectedSexOption
+                )
+            )
+            Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
+        }) {
+            Text("저장하기")
+        }
     }
 }
 
@@ -164,11 +184,9 @@ fun SexDropDownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-
     val options = listOf("남자", "여자")
 
     Column(modifier = modifier) {
-
         Text(
             text = sex,
             modifier = Modifier
@@ -182,7 +200,10 @@ fun SexDropDownMenu(
             onDismissRequest = { expanded = false },
         ) {
             options.forEach { option ->
-                DropdownMenuItem(onClick = { onSexValueChange(option) }) {
+                DropdownMenuItem(onClick = {
+                    onSexValueChange(option)
+                    expanded = false
+                }) {
                     Text(text = option)
                 }
             }

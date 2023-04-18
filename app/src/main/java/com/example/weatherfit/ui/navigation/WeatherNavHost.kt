@@ -1,5 +1,6 @@
 package com.example.weatherfit.ui.navigation
 
+import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ sealed class BottomNavItem(val route: String, val icon: Int) {
 @Composable
 fun WeatherFitNavHost(
     navController: NavHostController,
+    context: Context,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(bottomBar = { BottomNavigation(navController = navController) }) { innerPadding ->
@@ -41,7 +43,7 @@ fun WeatherFitNavHost(
                 AreaSettingScreen()
             }
             composable(route = BottomNavItem.ProfileSetting.route) {
-                ProfileSettingScreen()
+                ProfileSettingScreen(context = context)
             }
         }
     }

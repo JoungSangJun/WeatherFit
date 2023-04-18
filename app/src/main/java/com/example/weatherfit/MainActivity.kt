@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    WeatherFitNavHost(navController = rememberNavController())
+                    WeatherFitNavHost(navController = rememberNavController(),this)
                 }
             }
         }

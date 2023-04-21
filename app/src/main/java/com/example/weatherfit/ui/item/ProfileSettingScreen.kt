@@ -36,7 +36,7 @@ fun ProfileSettingScreen(
     ProfileSettingScreen(
         uiState = viewModel.uiState.collectAsState().value,
         saveUserProfilePreference = viewModel::saveUserProfilePreference,
-        context,
+        context = context,
         modifier = modifier
     )
 }
@@ -51,23 +51,34 @@ fun ProfileSettingScreen(
     var textFiledName by remember { mutableStateOf(uiState.name) }
     var textFiledAge by remember { mutableStateOf(uiState.age) }
     var selectedSexOption by remember { mutableStateOf(uiState.sex) }
+    var selectedPurposeOption by remember { mutableStateOf(uiState.purpose) }
+    var selectedBodyTypeOption by remember { mutableStateOf(uiState.bodyType) }
+    var selectedPreferredStyleOption by remember { mutableStateOf(uiState.preferredStyle) }
 
 
-//     처음 name,age의 값은 빈 값이 들어온 직후 uiState: StateFlow<UserProfileUiState>가 불러온 dataStore의
-//     값으로 변경되는데 그때 textFiledName의 값을 name으로 받기 위함
+//  처음 name,age의 값은 빈 값이 들어온 직후 uiState: StateFlow<UserProfileUiState>가 불러온 dataStore의
+//  값으로 변경되는데 그때 textFiledName의 값을 name으로 받기 위함
     LaunchedEffect(uiState.name) {
         textFiledName = uiState.name
     }
-
     LaunchedEffect(uiState.age) {
         textFiledAge = uiState.age
     }
-
     LaunchedEffect(uiState.sex) {
         selectedSexOption = uiState.sex
     }
+    LaunchedEffect(uiState.purpose) {
+        selectedPurposeOption = uiState.purpose
+    }
+    LaunchedEffect(uiState.bodyType) {
+        selectedBodyTypeOption = uiState.bodyType
+    }
+    LaunchedEffect(uiState.preferredStyle) {
+        selectedPreferredStyleOption = uiState.preferredStyle
+    }
 
     Column() {
+        // 상태 호이스팅 패턴 적용
         UserProfileScreen(
             textFiledName,
             onNameValueChange = { textFiledName = it },
@@ -76,8 +87,16 @@ fun ProfileSettingScreen(
             selectedSexOption,
             onSexValueChange = { selectedSexOption = it }
         )
-        UserClothStyleScreen()
+        UserClothStyleScreen(
+            selectedPurposeOption,
+            onPurposeValueChange = { selectedPurposeOption = it },
+            selectedBodyTypeOption,
+            onBodyTypeValueChange = { selectedBodyTypeOption = it },
+            selectedPreferredStyleOption,
+            onPreferredStyleValueChange = { selectedPreferredStyleOption = it }
+        )
         Spacer(modifier = Modifier.weight(1f))
+        // 저장하기 버튼
         Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.LightGray,
         ), onClick = {
@@ -85,7 +104,10 @@ fun ProfileSettingScreen(
                 UserProfileUiState(
                     textFiledName,
                     textFiledAge,
-                    selectedSexOption
+                    selectedSexOption,
+                    selectedPurposeOption,
+                    selectedBodyTypeOption,
+                    selectedPreferredStyleOption
                 )
             )
             Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
@@ -212,7 +234,14 @@ fun SexDropDownMenu(
 }
 
 @Composable
-fun UserClothStyleScreen() {
+fun UserClothStyleScreen(
+    selectedPurposeOption: String,
+    onPurposeValueChange: (String) -> Unit,
+    selectedBodyTypeOption: String,
+    onBodyTypeValueChange: (String) -> Unit,
+    selectedPreferredStyleOption: String,
+    onPreferredStyleValueChange: (String) -> Unit,
+) {
     Column() {
         Text(
             "옷 추천 설정",
@@ -228,20 +257,31 @@ fun UserClothStyleScreen() {
             modifier = Modifier.padding(start = 30.dp, top = 10.dp),
             fontWeight = FontWeight.Bold
         )
-        IconSelectorScreen("운동", "데이트", "비지니스", "결혼식")
+        IconSelectorScreen(
+            selectedValue1 = "운동",
+            selectedValue2 = "데이트",
+            selectedValue3 = "비지니스",
+            selectedValue4 = "결혼식",
+            selectedPurposeOption,
+            onPurposeValueChange
+        )
         Text("체형", modifier = Modifier.padding(start = 30.dp), fontWeight = FontWeight.Bold)
         IconSelectorScreen(
             selectedValue1 = "삼각형",
             selectedValue2 = "역삼각형",
             selectedValue3 = "사각형",
-            selectedValue4 = "타원형"
+            selectedValue4 = "타원형",
+            selectedBodyTypeOption,
+            onBodyTypeValueChange
         )
         Text("선호하는 스타일", modifier = Modifier.padding(start = 30.dp), fontWeight = FontWeight.Bold)
         IconSelectorScreen(
             selectedValue1 = "클래식",
             selectedValue2 = "캐주얼",
             selectedValue3 = "스트릿",
-            selectedValue4 = "빈티지"
+            selectedValue4 = "빈티지",
+            selectedPreferredStyleOption,
+            onPreferredStyleValueChange
         )
     }
 }
@@ -256,9 +296,9 @@ fun IconSelectorScreen(
     selectedValue2: String,
     selectedValue3: String,
     selectedValue4: String,
+    selectedOption: String,
+    onValueChange: (String) -> Unit,
 ) {
-    var selectedButton by remember { mutableStateOf(0) }
-
     val buttonOptions = listOf(selectedValue1, selectedValue2, selectedValue3, selectedValue4)
 
     Row(
@@ -273,19 +313,19 @@ fun IconSelectorScreen(
                     .weight(0.7f)
                     .height(80.dp)
                     .selectable(
-                        selected = (selectedButton == index),
-                        onClick = { selectedButton = index }
+                        selected = (selectedOption == text),
+                        onClick = { onValueChange(text) }
                     )
                     .padding(horizontal = 5.dp),
                 shape = CircleShape,
-                border = if (selectedButton == index) BorderStroke(
+                border = if (selectedOption == text) BorderStroke(
                     2.dp,
                     Color.Blue
                 ) else BorderStroke(2.dp, Color.Black)
             ) {
                 IconToggleButton(
-                    checked = (selectedButton == index),
-                    onCheckedChange = { selectedButton = index },
+                    checked = (selectedOption == text),
+                    onCheckedChange = { onValueChange(text) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
                     Text(text = text, fontSize = 13.sp)

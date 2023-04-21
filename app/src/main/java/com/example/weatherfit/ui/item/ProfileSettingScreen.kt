@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
 
-// 목적 체형 선호하는 스타일 enum class로 묶기
-
 @Composable
 fun ProfileSettingScreen(
     modifier: Modifier = Modifier,
@@ -54,26 +52,39 @@ fun ProfileSettingScreen(
     var selectedPurposeOption by remember { mutableStateOf(uiState.purpose) }
     var selectedBodyTypeOption by remember { mutableStateOf(uiState.bodyType) }
     var selectedPreferredStyleOption by remember { mutableStateOf(uiState.preferredStyle) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
+    var oldUiState by remember { mutableStateOf(uiState) }
 
 
-//  처음 name,age의 값은 빈 값이 들어온 직후 uiState: StateFlow<UserProfileUiState>가 불러온 dataStore의
-//  값으로 변경되는데 그때 textFiledName의 값을 name으로 받기 위함
-    LaunchedEffect(uiState.name) {
+    // 사용자가 프로필 변경 시 oldUiState와 비교해 다르면 저장하기 버튼 활성화
+    LaunchedEffect(
+        textFiledName,
+        textFiledAge,
+        selectedSexOption,
+        selectedPurposeOption,
+        selectedBodyTypeOption,
+        selectedPreferredStyleOption
+    ) {
+        isButtonEnabled = false
+        if (textFiledName != oldUiState.name || textFiledAge != oldUiState.age
+            || selectedSexOption != oldUiState.sex ||
+            selectedPurposeOption != oldUiState.purpose ||
+            selectedBodyTypeOption != oldUiState.bodyType ||
+            selectedPreferredStyleOption != oldUiState.preferredStyle
+        ) {
+            isButtonEnabled = true
+        }
+    }
+
+// 첫 uiState는 초기값인 모두 빈 값 들어온 다음 dataStore Preferences의 값이 들어옴
+// 때문에 초기값 다음에 들어오는 dataStore의 값을 받아줌
+    LaunchedEffect(uiState) {
+        oldUiState = uiState
         textFiledName = uiState.name
-    }
-    LaunchedEffect(uiState.age) {
         textFiledAge = uiState.age
-    }
-    LaunchedEffect(uiState.sex) {
         selectedSexOption = uiState.sex
-    }
-    LaunchedEffect(uiState.purpose) {
         selectedPurposeOption = uiState.purpose
-    }
-    LaunchedEffect(uiState.bodyType) {
         selectedBodyTypeOption = uiState.bodyType
-    }
-    LaunchedEffect(uiState.preferredStyle) {
         selectedPreferredStyleOption = uiState.preferredStyle
     }
 
@@ -97,21 +108,25 @@ fun ProfileSettingScreen(
         )
         Spacer(modifier = Modifier.weight(1f))
         // 저장하기 버튼
-        Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.LightGray,
-        ), onClick = {
-            saveUserProfilePreference(
-                UserProfileUiState(
-                    textFiledName,
-                    textFiledAge,
-                    selectedSexOption,
-                    selectedPurposeOption,
-                    selectedBodyTypeOption,
-                    selectedPreferredStyleOption
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Gray,
+                contentColor = if (isButtonEnabled) Color.Black else Color.Gray
+            ), enabled = isButtonEnabled, onClick = {
+                saveUserProfilePreference(
+                    UserProfileUiState(
+                        textFiledName,
+                        textFiledAge,
+                        selectedSexOption,
+                        selectedPurposeOption,
+                        selectedBodyTypeOption,
+                        selectedPreferredStyleOption
+                    )
                 )
-            )
-            Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
-        }) {
+                Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
+                isButtonEnabled = false
+            }) {
             Text("저장하기")
         }
     }
@@ -274,7 +289,11 @@ fun UserClothStyleScreen(
             selectedBodyTypeOption,
             onBodyTypeValueChange
         )
-        Text("선호하는 스타일", modifier = Modifier.padding(start = 30.dp), fontWeight = FontWeight.Bold)
+        Text(
+            "선호하는 스타일",
+            modifier = Modifier.padding(start = 30.dp),
+            fontWeight = FontWeight.Bold
+        )
         IconSelectorScreen(
             selectedValue1 = "클래식",
             selectedValue2 = "캐주얼",

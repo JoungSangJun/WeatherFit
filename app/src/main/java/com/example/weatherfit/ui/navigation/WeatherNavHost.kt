@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
@@ -78,7 +79,7 @@ fun BottomNavigation(navController: NavHostController) {
         backgroundColor = Color.White,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+        val currentDestination = navBackStackEntry?.destination
 
         items.forEach { item ->
             BottomNavigationItem(
@@ -90,7 +91,7 @@ fun BottomNavigation(navController: NavHostController) {
                 },
                 selectedContentColor = MaterialTheme.colors.primary,
                 unselectedContentColor = Gray,
-                selected = currentRoute == item.route,
+                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 alwaysShowLabel = false,
                 onClick = {
                     navController.navigate(item.route) {

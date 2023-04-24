@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WeatherFit</string>
+    <string name="add_area">AddArea</string>
 </resources>

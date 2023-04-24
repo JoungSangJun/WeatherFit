@@ -9,10 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import com.example.weatherfit.R
 import com.example.weatherfit.ui.home.HomeScreen
 import com.example.weatherfit.ui.item.AreaSettingScreen
@@ -22,6 +25,11 @@ sealed class BottomNavItem(val route: String, val icon: Int) {
     object Home : BottomNavItem("home", R.drawable.baseline_home_24)
     object AreaSetting : BottomNavItem("areaSetting", R.drawable.baseline_add_location_alt_24)
     object ProfileSetting : BottomNavItem("profileSetting", R.drawable.baseline_account_circle_24)
+}
+
+sealed class AreaSettingNavItem(val route: String) {
+    object WeatherForecast : AreaSettingNavItem("weatherForecast")
+    object AddArea : AreaSettingNavItem("addArea")
 }
 
 @Composable
@@ -39,13 +47,21 @@ fun WeatherFitNavHost(
             composable(route = BottomNavItem.Home.route) {
                 HomeScreen()
             }
-            composable(route = BottomNavItem.AreaSetting.route) {
-                AreaSettingScreen()
-            }
+            areaSettingGraph(navController)
             composable(route = BottomNavItem.ProfileSetting.route) {
                 ProfileSettingScreen(context = context)
             }
         }
+    }
+}
+
+fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
+    navigation(
+        startDestination = AreaSettingNavItem.WeatherForecast.route,
+        route = BottomNavItem.AreaSetting.route
+    ) {
+        composable(AreaSettingNavItem.WeatherForecast.route) { AreaSettingScreen() }
+        composable(AreaSettingNavItem.AddArea.route) { }
     }
 }
 

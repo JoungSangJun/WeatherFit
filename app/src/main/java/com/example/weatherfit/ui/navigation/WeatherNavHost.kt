@@ -17,9 +17,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.example.weatherfit.R
+import com.example.weatherfit.ui.areaSetting.AreaAddScreen
+import com.example.weatherfit.ui.areaSetting.WeatherForecastScreen
 import com.example.weatherfit.ui.home.HomeScreen
-import com.example.weatherfit.ui.item.AreaSettingScreen
-import com.example.weatherfit.ui.item.ProfileSettingScreen
+import com.example.weatherfit.ui.profile.ProfileSettingScreen
 
 sealed class BottomNavItem(val route: String, val icon: Int) {
     object Home : BottomNavItem("home", R.drawable.baseline_home_24)
@@ -29,7 +30,7 @@ sealed class BottomNavItem(val route: String, val icon: Int) {
 
 sealed class AreaSettingNavItem(val route: String) {
     object WeatherForecast : AreaSettingNavItem("weatherForecast")
-    object AddArea : AreaSettingNavItem("addArea")
+    object AreaAdd : AreaSettingNavItem("areaAdd")
 }
 
 @Composable
@@ -60,8 +61,8 @@ fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
         startDestination = AreaSettingNavItem.WeatherForecast.route,
         route = BottomNavItem.AreaSetting.route
     ) {
-        composable(AreaSettingNavItem.WeatherForecast.route) { AreaSettingScreen() }
-        composable(AreaSettingNavItem.AddArea.route) { }
+        composable(AreaSettingNavItem.WeatherForecast.route) { WeatherForecastScreen() }
+        composable(AreaSettingNavItem.AreaAdd.route) { AreaAddScreen() }
     }
 }
 

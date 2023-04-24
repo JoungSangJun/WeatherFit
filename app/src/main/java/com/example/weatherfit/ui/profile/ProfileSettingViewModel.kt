@@ -1,4 +1,4 @@
-package com.example.weatherfit.ui.item
+package com.example.weatherfit.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -3,8 +3,7 @@ package com.example.weatherfit.ui.navigation
 import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
@@ -40,7 +39,16 @@ fun WeatherFitNavHost(
     context: Context,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(bottomBar = { BottomNavigation(navController = navController) }) { innerPadding ->
+    var showBottomBar by remember { mutableStateOf(true) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    showBottomBar = when (navBackStackEntry?.destination?.route) {
+        AreaSettingNavItem.AreaAdd.route -> false
+        else -> true
+    }
+    Scaffold(
+        bottomBar = { if (showBottomBar) BottomNavigation(navController = navController) }
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = BottomNavItem.Home.route,
@@ -62,7 +70,9 @@ fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
         startDestination = AreaSettingNavItem.WeatherForecast.route,
         route = BottomNavItem.AreaSetting.route
     ) {
-        composable(AreaSettingNavItem.WeatherForecast.route) { WeatherForecastScreen() }
+        composable(AreaSettingNavItem.WeatherForecast.route) {
+            WeatherForecastScreen(onNavigateToAreaAdd = { navController.navigate(AreaSettingNavItem.AreaAdd.route) })
+        }
         composable(AreaSettingNavItem.AreaAdd.route) { AreaAddScreen() }
     }
 }

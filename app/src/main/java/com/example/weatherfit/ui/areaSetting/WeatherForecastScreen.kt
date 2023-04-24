@@ -17,11 +17,11 @@ import com.example.weatherfit.R
 
 
 @Composable
-fun WeatherForecastScreen() {
+fun WeatherForecastScreen(onNavigateToAreaAdd: () -> Unit) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = onNavigateToAreaAdd,
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 Icon(

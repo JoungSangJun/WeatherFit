@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.res.stringResource
 import com.example.weatherfit.R
+import com.example.weatherfit.WeatherFitTopAppBar
 
 
 @Composable
@@ -30,6 +31,12 @@ fun WeatherForecastScreen(onNavigateToAreaAdd: () -> Unit) {
                     tint = MaterialTheme.colors.onPrimary
                 )
             }
+        },
+        topBar = {
+            WeatherFitTopAppBar(
+                title = "날씨",
+                canNavigateBack = false,
+            )
         }
     ) {
         LazyColumn(Modifier.padding(it)) {

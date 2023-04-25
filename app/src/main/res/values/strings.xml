@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WeatherFit</string>
     <string name="add_area">AddArea</string>
+    <string name="back_button">뒤로가기버튼</string>
 </resources>

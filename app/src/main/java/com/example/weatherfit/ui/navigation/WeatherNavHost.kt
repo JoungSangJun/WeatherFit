@@ -73,7 +73,7 @@ fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
         composable(AreaSettingNavItem.WeatherForecast.route) {
             WeatherForecastScreen(onNavigateToAreaAdd = { navController.navigate(AreaSettingNavItem.AreaAdd.route) })
         }
-        composable(AreaSettingNavItem.AreaAdd.route) { AreaAddScreen() }
+        composable(AreaSettingNavItem.AreaAdd.route) { AreaAddScreen(onNavigateUp = { navController.navigateUp() }) }
     }
 }
 

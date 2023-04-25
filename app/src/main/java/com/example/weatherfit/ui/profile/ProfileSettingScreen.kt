@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
+import com.example.weatherfit.WeatherFitTopAppBar
 
 @Composable
 fun ProfileSettingScreen(
@@ -88,48 +89,58 @@ fun ProfileSettingScreen(
         selectedPreferredStyleOption = uiState.preferredStyle
     }
 
-    Column() {
-        // 상태 호이스팅 패턴 적용
-        UserProfileScreen(
-            textFiledName,
-            onNameValueChange = { textFiledName = it },
-            textFiledAge,
-            onAgeValueChange = { textFiledAge = it },
-            selectedSexOption,
-            onSexValueChange = { selectedSexOption = it }
-        )
-        UserClothStyleScreen(
-            selectedPurposeOption,
-            onPurposeValueChange = { selectedPurposeOption = it },
-            selectedBodyTypeOption,
-            onBodyTypeValueChange = { selectedBodyTypeOption = it },
-            selectedPreferredStyleOption,
-            onPreferredStyleValueChange = { selectedPreferredStyleOption = it }
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        // 저장하기 버튼
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Gray,
-                contentColor = if (isButtonEnabled) Color.Black else Color.Gray
-            ), enabled = isButtonEnabled, onClick = {
-                saveUserProfilePreference(
-                    UserProfileUiState(
-                        textFiledName,
-                        textFiledAge,
-                        selectedSexOption,
-                        selectedPurposeOption,
-                        selectedBodyTypeOption,
-                        selectedPreferredStyleOption
+    Scaffold(
+        topBar = {
+            WeatherFitTopAppBar(
+                title = "마이페이지",
+                canNavigateBack = false,
+            )
+        }
+    ) {
+        Column(modifier = Modifier.padding(it)) {
+            // 상태 호이스팅 패턴 적용
+            UserProfileScreen(
+                textFiledName,
+                onNameValueChange = { textFiledName = it },
+                textFiledAge,
+                onAgeValueChange = { textFiledAge = it },
+                selectedSexOption,
+                onSexValueChange = { selectedSexOption = it }
+            )
+            UserClothStyleScreen(
+                selectedPurposeOption,
+                onPurposeValueChange = { selectedPurposeOption = it },
+                selectedBodyTypeOption,
+                onBodyTypeValueChange = { selectedBodyTypeOption = it },
+                selectedPreferredStyleOption,
+                onPreferredStyleValueChange = { selectedPreferredStyleOption = it }
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            // 저장하기 버튼
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Gray,
+                    contentColor = if (isButtonEnabled) Color.Black else Color.Gray
+                ), enabled = isButtonEnabled, onClick = {
+                    saveUserProfilePreference(
+                        UserProfileUiState(
+                            textFiledName,
+                            textFiledAge,
+                            selectedSexOption,
+                            selectedPurposeOption,
+                            selectedBodyTypeOption,
+                            selectedPreferredStyleOption
+                        )
                     )
-                )
-                Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
-                isButtonEnabled = false
-            }) {
-            Text("저장하기")
+                    Toast.makeText(context, "저장되었습니다", Toast.LENGTH_SHORT).show()
+                    isButtonEnabled = false
+                }) {
+                Text("저장하기")
+            }
         }
     }
+
 }
 
 @Composable

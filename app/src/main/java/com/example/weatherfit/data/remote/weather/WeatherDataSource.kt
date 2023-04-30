@@ -1,4 +1,4 @@
-package com.example.weatherfit.data.remote
+package com.example.weatherfit.data.remote.weather
 
 import com.example.weatherfit.model.WeatherData
 

@@ -9,12 +9,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.WeatherFitTopAppBar
-import com.example.weatherfit.data.local.CityCategory.City
 
 
 @Composable
-fun AreaAddScreen(onNavigateUp: () -> Unit) {
+fun AreaAddScreen(
+    onNavigateUp: () -> Unit,
+    areaAddViewModel: AreaAddViewModel = viewModel()
+) {
+    val cityName = areaAddViewModel.cityList
+    val townName = areaAddViewModel.townList
+    val selectedCity = areaAddViewModel.selectedCity
+    val selectedTown = areaAddViewModel.selectedTown
+
     Scaffold(
         topBar = {
             WeatherFitTopAppBar(
@@ -23,11 +31,18 @@ fun AreaAddScreen(onNavigateUp: () -> Unit) {
                 navigateUp = onNavigateUp
             )
         }
-    ) {
-
+    ) { it ->
         Column(modifier = Modifier.padding(it)) {
-            DropDownMenu("도 / 특별시 / 광역시", City)
-            DropDownMenu("시 / 구 / 군", City)
+            DropDownMenu(
+                title = "도 / 특별시 / 광역시",
+                item = cityName,
+                selectedText = selectedCity,
+                onValueChange = { areaAddViewModel.selectedCityChange(it) })
+            DropDownMenu(
+                title = "시 / 구 / 군",
+                item = townName.map { it.townName }.toTypedArray(),
+                selectedText = selectedTown,
+                onValueChange = { areaAddViewModel.selectedTownChange(it) })
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth(),
@@ -43,9 +58,13 @@ fun AreaAddScreen(onNavigateUp: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DropDownMenu(title: String, item: Array<String>) {
+fun DropDownMenu(
+    title: String,
+    item: Array<String>,
+    selectedText: String,
+    onValueChange: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(item[0]) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,7 +111,7 @@ fun DropDownMenu(title: String, item: Array<String>) {
                             DropdownMenuItem(
                                 content = { Text(text = item) },
                                 onClick = {
-                                    selectedText = item
+                                    onValueChange(item)
                                     expanded = false
                                 }
                             )

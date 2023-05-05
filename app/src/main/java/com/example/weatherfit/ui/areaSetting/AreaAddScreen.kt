@@ -16,7 +16,7 @@ import com.example.weatherfit.WeatherFitTopAppBar
 @Composable
 fun AreaAddScreen(
     onNavigateUp: () -> Unit,
-    areaAddViewModel: AreaAddViewModel = viewModel()
+    areaAddViewModel: AreaAddViewModel = viewModel(factory = AreaAddViewModel.Factory)
 ) {
     val cityName = areaAddViewModel.cityList
     val townName = areaAddViewModel.townList
@@ -45,7 +45,7 @@ fun AreaAddScreen(
                 onValueChange = { areaAddViewModel.selectedTownChange(it) })
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth(),
+                onClick = { areaAddViewModel.getWeatherInfo()}, modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.LightGray,
                 )

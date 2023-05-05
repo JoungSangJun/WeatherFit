@@ -19,11 +19,13 @@ data class Items(
 
 @Serializable
 data class Item(
-    val item: List<Hi>
+    val item: List<Data>
 )
 
 @Serializable
-data class Hi(
-    val nx: Int,
-    val ny: Int,
+data class Data(
+    val category: String,
+    val fcstDate: String,
+    val fcstTime: String,
+    val fcstValue: String,
 )

@@ -1,5 +1,7 @@
 package com.example.weatherfit.ui.areaSetting
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.WeatherFitTopAppBar
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AreaAddScreen(
     onNavigateUp: () -> Unit,

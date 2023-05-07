@@ -1,7 +1,7 @@
 package com.example.weatherfit.network
 
 import com.example.weatherfit.BuildConfig
-import com.example.weatherfit.model.WeatherData
+import com.example.weatherfit.model.WeatherDataUiState
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -15,5 +15,5 @@ interface WeatherApiService {
         @Query("base_time") base_time: Int,
         @Query("nx") nx: String,
         @Query("ny") ny: String
-    ): WeatherData
+    ): WeatherDataUiState
 }

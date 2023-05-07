@@ -1,6 +1,7 @@
 package com.example.weatherfit.ui.navigation
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -57,7 +58,7 @@ fun WeatherFitNavHost(
             composable(route = BottomNavItem.Home.route) {
                 HomeScreen()
             }
-            areaSettingGraph(navController)
+            areaSettingGraph(navController, context = context)
             composable(route = BottomNavItem.ProfileSetting.route) {
                 ProfileSettingScreen(context = context)
             }
@@ -65,7 +66,7 @@ fun WeatherFitNavHost(
     }
 }
 
-fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
+fun NavGraphBuilder.areaSettingGraph(navController: NavController, context: Context) {
     navigation(
         startDestination = AreaSettingNavItem.WeatherForecast.route,
         route = BottomNavItem.AreaSetting.route
@@ -74,9 +75,12 @@ fun NavGraphBuilder.areaSettingGraph(navController: NavController) {
             WeatherForecastScreen(onNavigateToAreaAdd = { navController.navigate(AreaSettingNavItem.AreaAdd.route) })
         }
         composable(AreaSettingNavItem.AreaAdd.route) {
-            AreaAddScreen(
-                onNavigateUp = { navController.navigateUp() }
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                AreaAddScreen(
+                    onNavigateUp = { navController.navigateUp() },
+                    context = context
+                )
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.weatherfit.ui.areaSetting
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
@@ -19,7 +20,8 @@ import com.example.weatherfit.WeatherFitTopAppBar
 @Composable
 fun AreaAddScreen(
     onNavigateUp: () -> Unit,
-    areaAddViewModel: AreaAddViewModel = viewModel(factory = AreaAddViewModel.Factory)
+    areaAddViewModel: AreaAddViewModel = viewModel(factory = AreaAddViewModel.Factory),
+    context: Context
 ) {
     val cityName = areaAddViewModel.cityList
     val townName = areaAddViewModel.townList
@@ -48,7 +50,8 @@ fun AreaAddScreen(
                 onValueChange = { areaAddViewModel.selectedTownChange(it) })
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { areaAddViewModel.getWeatherInfo()}, modifier = Modifier.fillMaxWidth(),
+                onClick = { areaAddViewModel.getWeatherInfo(context = context) },
+                modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.LightGray,
                 )

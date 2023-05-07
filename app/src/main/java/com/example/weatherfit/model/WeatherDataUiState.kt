@@ -3,7 +3,7 @@ package com.example.weatherfit.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WeatherData(
+data class WeatherDataUiState(
     val response: Body
 )
 

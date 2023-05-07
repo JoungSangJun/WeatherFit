@@ -1,6 +1,6 @@
 package com.example.weatherfit.data.remote.weather
 
-import com.example.weatherfit.model.WeatherData
+import com.example.weatherfit.model.WeatherDataUiState
 import com.example.weatherfit.network.WeatherApiService
 
 interface WeatherInfoRepository {
@@ -12,7 +12,7 @@ interface WeatherInfoRepository {
         base_time: Int,
         nx: String,
         ny: String
-    ): WeatherData
+    ): WeatherDataUiState
 }
 
 class NetworkWeatherInfoRepository(private val weatherApiService : WeatherApiService) : WeatherInfoRepository {
@@ -24,5 +24,5 @@ class NetworkWeatherInfoRepository(private val weatherApiService : WeatherApiSer
         base_time: Int,
         nx: String,
         ny: String
-    ): WeatherData = weatherApiService.getWeather(page_no,num_of_rows,data_type,base_date,base_time,nx,ny)
+    ): WeatherDataUiState = weatherApiService.getWeather(page_no,num_of_rows,data_type,base_date,base_time,nx,ny)
 }

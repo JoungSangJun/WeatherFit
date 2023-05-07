@@ -1,5 +1,6 @@
 package com.example.weatherfit.ui.areaSetting
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
@@ -26,7 +27,7 @@ import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
 class AreaAddViewModel(
     private val weatherInfoRepository: WeatherInfoRepository,
-    private val weatherDataDao: WeatherDataDao
+    private val weatherDataDao: WeatherDataDao,
 ) : ViewModel() {
 
     private val yesterday: Int
@@ -39,12 +40,11 @@ class AreaAddViewModel(
 
 
     init {
-        // 하루 전의 날짜 받기
         val nowInKorea = LocalDate.now(ZoneId.of("Asia/Seoul"))
         val year = nowInKorea.year.toString()
         val month = "%02d".format(nowInKorea.monthValue)
         val day = "%02d".format(nowInKorea.dayOfMonth)
-
+        // 하루 전의 날짜 받기
         yesterday = (year + month + day).toInt() - 1
     }
 
@@ -96,7 +96,8 @@ class AreaAddViewModel(
         base_date: Int = yesterday,
         base_time: Int = 2300,
         nx: String = selectedTownNx,
-        ny: String = selectedTownNy
+        ny: String = selectedTownNy,
+        context: Context
     ) {
         viewModelScope.launch {
             val weatherUiState = weatherInfoRepository.getWeather(
@@ -110,12 +111,13 @@ class AreaAddViewModel(
             )
 
             // 같은 값 저장 막기
-            weatherDataDao.insert(
+            weatherDataDao.insertWithDupCheck(
                 WeatherData(
                     id = 0,
                     townName = selectedTown,
                     weatherData = weatherUiState.response.body.items.item
-                )
+                ),
+                context = context
             )
         }
 

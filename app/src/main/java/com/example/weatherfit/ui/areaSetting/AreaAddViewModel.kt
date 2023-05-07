@@ -14,6 +14,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weatherfit.WeatherFitApplication
 import com.example.weatherfit.data.local.CityCategory
 import com.example.weatherfit.data.local.TownInfo
+import com.example.weatherfit.data.local.WeatherData
+import com.example.weatherfit.data.local.WeatherDataDao
 import com.example.weatherfit.data.remote.weather.WeatherInfoRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -22,7 +24,10 @@ import java.util.*
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-class AreaAddViewModel(private val weatherInfoRepository: WeatherInfoRepository) : ViewModel() {
+class AreaAddViewModel(
+    private val weatherInfoRepository: WeatherInfoRepository,
+    private val weatherDataDao: WeatherDataDao
+) : ViewModel() {
 
     private val yesterday: Int
     val cityList = CityCategory.City
@@ -40,7 +45,7 @@ class AreaAddViewModel(private val weatherInfoRepository: WeatherInfoRepository)
         val month = "%02d".format(nowInKorea.monthValue)
         val day = "%02d".format(nowInKorea.dayOfMonth)
 
-        yesterday = (year + month + day).toInt()
+        yesterday = (year + month + day).toInt() - 1
     }
 
 
@@ -103,6 +108,15 @@ class AreaAddViewModel(private val weatherInfoRepository: WeatherInfoRepository)
                 nx,
                 ny
             )
+
+            // 같은 값 저장 막기
+            weatherDataDao.insert(
+                WeatherData(
+                    id = 0,
+                    townName = selectedTown,
+                    weatherData = weatherUiState.response.body.items.item
+                )
+            )
         }
 
     }
@@ -113,7 +127,10 @@ class AreaAddViewModel(private val weatherInfoRepository: WeatherInfoRepository)
                 val application =
                     (this[APPLICATION_KEY] as WeatherFitApplication)
                 val weatherRepository = application.container.weatherInfoRepository
-                AreaAddViewModel(weatherInfoRepository = weatherRepository)
+                AreaAddViewModel(
+                    weatherInfoRepository = weatherRepository,
+                    weatherDataDao = application.weatherDatabase.weatherDataDao()
+                )
             }
         }
     }

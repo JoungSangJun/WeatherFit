@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -27,4 +28,11 @@ interface WeatherDataDao {
 
     @Query("SELECT COUNT(*) FROM Weather WHERE town_name = :townName")
     suspend fun checkDuplication(townName: String): Int
+
+    @Query(
+        """
+        SELECT * FROM weather 
+        """
+    )
+    fun getAllCityWeather(): Flow<List<WeatherData>>
 }

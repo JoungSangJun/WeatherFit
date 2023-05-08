@@ -110,7 +110,6 @@ class AreaAddViewModel(
                 ny
             )
 
-            // 같은 값 저장 막기
             weatherDataDao.insertWithDupCheck(
                 WeatherData(
                     id = 0,

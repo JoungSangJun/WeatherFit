@@ -3,6 +3,9 @@ package com.example.weatherfit.data.remote.weather
 import com.example.weatherfit.model.WeatherDataUiState
 import com.example.weatherfit.network.WeatherApiService
 
+/**
+ * 기상청 API 통신 class
+ */
 interface WeatherInfoRepository {
     suspend fun getWeather(
         page_no: Int,

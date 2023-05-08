@@ -35,4 +35,7 @@ interface WeatherDataDao {
         """
     )
     fun getAllCityWeather(): Flow<List<WeatherData>>
+
+    @Query("Delete From Weather WHERE town_name = :townName")
+    suspend fun deleteSelectedData(townName: String)
 }

@@ -17,6 +17,7 @@ import com.example.weatherfit.WeatherFitTopAppBar
 import com.example.weatherfit.data.local.WeatherData
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,6 @@ fun WeatherForecastScreen(
     onNavigateToAreaAdd: () -> Unit,
     weatherForecastViewModel: WeatherForecastViewModel = viewModel(factory = WeatherForecastViewModel.Factory),
 ) {
-
     val current = LocalDateTime.now()
     val formatter = DateTimeFormatter.ofPattern("HH")
     val currentTime = current.format(formatter) + "00"
@@ -71,7 +71,8 @@ fun WeatherForecastScreen(
                 WeatherDataListItem(
                     weatherData = it,
                     currentTime = currentTime,
-                    today = today
+                    today = today,
+                    weatherForecastViewModel
                 )
             }
         }
@@ -79,7 +80,12 @@ fun WeatherForecastScreen(
 }
 
 @Composable
-fun WeatherDataListItem(weatherData: WeatherData, currentTime: String, today: String) {
+fun WeatherDataListItem(
+    weatherData: WeatherData,
+    currentTime: String,
+    today: String,
+    weatherForecastViewModel: WeatherForecastViewModel
+) {
     val currentTmp = weatherData.weatherData.filter {
         it.category == "TMP" && it.fcstTime == currentTime
     }.map {
@@ -95,6 +101,7 @@ fun WeatherDataListItem(weatherData: WeatherData, currentTime: String, today: St
     }.map {
         it.fcstValue
     }[0]
+
     Card(
         modifier = Modifier
             .padding(10.dp),
@@ -116,6 +123,13 @@ fun WeatherDataListItem(weatherData: WeatherData, currentTime: String, today: St
             }
             Spacer(Modifier.height(5.dp))
             Row() {
+                Button(
+                    { weatherForecastViewModel.deleteSelectedData(townName = weatherData.townName) },
+                    colors = ButtonDefaults.buttonColors(Color.LightGray),
+                    elevation = elevation(0.dp)
+                ) {
+                    Text(text = "삭제")
+                }
                 Spacer(Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow_drop_up_24),

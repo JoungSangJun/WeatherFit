@@ -50,7 +50,9 @@ fun AreaAddScreen(
                 onValueChange = { areaAddViewModel.selectedTownChange(it) })
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { areaAddViewModel.getWeatherInfo(context = context) },
+                onClick = {
+                    areaAddViewModel.getWeatherInfo(context = context)
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.LightGray,

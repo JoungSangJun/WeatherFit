@@ -71,7 +71,10 @@ class AreaAddViewModel(
             "세종특별자치시" -> CityCategory.TownSejong
             "인천광역시" -> CityCategory.TownIncheon
             "전라남도" -> CityCategory.TownJeolLanamDo
-            else -> CityCategory.TownChungCheongBukDo
+            "충청북도" -> CityCategory.TownChungCheongBukDo
+            "충청남도" -> CityCategory.TownChungCheongNamDo
+            "전라북도" -> CityCategory.TownJeolLaBukDo
+            else -> CityCategory.TownJejuDo
         }
     }
 

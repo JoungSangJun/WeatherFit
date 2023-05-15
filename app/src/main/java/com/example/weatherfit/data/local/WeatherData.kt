@@ -16,8 +16,8 @@ data class WeatherData(
     val id: Int = 0,
     @NonNull
     @ColumnInfo(name = "town_name")
-    val townName: String,
+    val townName: String = "",
     @NonNull
     @ColumnInfo(name = "weather_data")
-    val weatherData: List<Data>
+    val weatherData: List<Data> = emptyList()
 )

@@ -1,5 +1,7 @@
 package com.example.weatherfit.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
 
 
@@ -25,8 +28,10 @@ val gradient = Brush.verticalGradient(
     endY = 3000.0f
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()

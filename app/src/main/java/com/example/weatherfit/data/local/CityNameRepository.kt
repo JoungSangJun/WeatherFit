@@ -265,7 +265,7 @@ object CityCategory {
         TownInfo("단양군", "84", "115")
     )
 
-    val ChungCheongNamDo = arrayOf(
+    val TownChungCheongNamDo = arrayOf(
         TownInfo("천안시동남구", "63", "110"),
         TownInfo(
             "천안시서북구", "63", "112"
@@ -286,7 +286,7 @@ object CityCategory {
         TownInfo("태안군", "48", "109")
     )
 
-    val JeolLaBukDo = arrayOf(
+    val TownJeolLaBukDo = arrayOf(
         TownInfo("전주시완산구", "63", "89"),
         TownInfo(
             "전주시덕진구", "63", "89"
@@ -305,7 +305,7 @@ object CityCategory {
         TownInfo("부안군", "56", "87")
     )
 
-    val JejuDo = arrayOf(
+    val TownJejuDo = arrayOf(
         TownInfo("제주시", "53", "38"),
         TownInfo("서귀포시", "52", "33")
     )

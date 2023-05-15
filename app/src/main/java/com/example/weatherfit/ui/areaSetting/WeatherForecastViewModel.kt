@@ -18,11 +18,9 @@ class WeatherForecastViewModel(private val weatherDataDao: WeatherDataDao) : Vie
 
     fun getAllCityWeather(): Flow<List<WeatherData>> = weatherDataDao.getAllCityWeather()
 
-
     fun deleteSelectedData(townName: String) = viewModelScope.launch {
         weatherDataDao.deleteSelectedData(townName)
     }
-
 
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)

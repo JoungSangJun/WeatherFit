@@ -26,6 +26,9 @@ interface WeatherDataDao {
         insert(weatherData)
     }
 
+    @Query("SELECT * FROM Weather WHERE town_name = :townName")
+    fun getSelectedTownNameWeather(townName: String): Flow<WeatherData>
+
     @Query("SELECT COUNT(*) FROM Weather WHERE town_name = :townName")
     suspend fun checkDuplication(townName: String): Int
 

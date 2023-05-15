@@ -29,6 +29,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/*
+ room에 저장된 데이터는 과거 데이터이기 때문에 시간이 지나 데이터를 가져오면 오류발생
+ */
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -86,21 +89,22 @@ fun WeatherDataListItem(
     today: String,
     weatherForecastViewModel: WeatherForecastViewModel
 ) {
+
     val currentTmp = weatherData.weatherData.filter {
         it.category == "TMP" && it.fcstTime == currentTime
     }.map {
         it.fcstValue
-    }[0]
+    }.firstOrNull() ?: "0"
     val tmpMax = weatherData.weatherData.filter {
         it.category == "TMX" && it.fcstDate == today
     }.map {
         it.fcstValue
-    }[0]
+    }.firstOrNull() ?: "0"
     val tmpMin = weatherData.weatherData.filter {
         it.category == "TMN" && it.fcstDate == today
     }.map {
         it.fcstValue
-    }[0]
+    }.firstOrNull() ?: "0"
 
     Card(
         modifier = Modifier

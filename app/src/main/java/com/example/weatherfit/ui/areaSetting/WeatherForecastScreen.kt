@@ -133,13 +133,13 @@ fun WeatherDataListItem(
                     modifier = Modifier.size(30.dp),
                     contentDescription = ""
                 )
-                Text(tmpMax + "C°")
+                Text("$tmpMax C°")
                 Image(
                     painter = painterResource(id = R.drawable.outline_arrow_drop_down_24),
                     modifier = Modifier.size(30.dp),
                     contentDescription = ""
                 )
-                Text(tmpMin + "C°")
+                Text("$tmpMin C°")
             }
         }
     }

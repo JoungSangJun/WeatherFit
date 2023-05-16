@@ -2,6 +2,7 @@ package com.example.weatherfit.ui.navigation
 
 import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -34,6 +35,9 @@ sealed class AreaSettingNavItem(val route: String) {
     object AreaAdd : AreaSettingNavItem("areaAdd")
 }
 
+
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherFitNavHost(
     navController: NavHostController,
@@ -66,6 +70,7 @@ fun WeatherFitNavHost(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.areaSettingGraph(navController: NavController, context: Context) {
     navigation(
         startDestination = AreaSettingNavItem.WeatherForecast.route,

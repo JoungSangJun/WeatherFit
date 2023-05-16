@@ -13,10 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weatherfit.WeatherFitApplication
-import com.example.weatherfit.data.local.CityCategory
-import com.example.weatherfit.data.local.TownInfo
-import com.example.weatherfit.data.local.WeatherData
-import com.example.weatherfit.data.local.WeatherDataDao
+import com.example.weatherfit.data.local.*
 import com.example.weatherfit.data.remote.weather.WeatherInfoRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -30,24 +27,12 @@ class AreaAddViewModel(
     private val weatherDataDao: WeatherDataDao,
 ) : ViewModel() {
 
-    private val yesterday: Int
     val cityList = CityCategory.City
     var townList by mutableStateOf(CityCategory.TownGangwon)
     var selectedCity by mutableStateOf(cityList[0])
     var selectedTown by mutableStateOf(townList[0].townName)
     var selectedTownNx by mutableStateOf(townList[0].nx)
     var selectedTownNy by mutableStateOf(townList[0].ny)
-
-
-    init {
-        val nowInKorea = LocalDate.now(ZoneId.of("Asia/Seoul"))
-        val year = nowInKorea.year.toString()
-        val month = "%02d".format(nowInKorea.monthValue)
-        val day = "%02d".format(nowInKorea.dayOfMonth)
-        // 하루 전의 날짜 받기
-        yesterday = (year + month + day).toInt() - 1
-    }
-
 
     fun selectedCityChange(changedCityName: String) {
         selectedCity = changedCityName
@@ -96,7 +81,7 @@ class AreaAddViewModel(
         page_no: Int = 1,
         num_of_rows: Int = 580,
         data_type: String = "Json",
-        base_date: Int = yesterday,
+        base_date: Int = CurrentTime.today.toInt() - 1,
         base_time: Int = 2300,
         nx: String = selectedTownNx,
         ny: String = selectedTownNy,

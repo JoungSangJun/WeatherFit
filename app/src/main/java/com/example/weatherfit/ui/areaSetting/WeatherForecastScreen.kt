@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherfit.data.local.CurrentTime
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -39,13 +40,6 @@ fun WeatherForecastScreen(
     onNavigateToAreaAdd: () -> Unit,
     weatherForecastViewModel: WeatherForecastViewModel = viewModel(factory = WeatherForecastViewModel.Factory),
 ) {
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("HH")
-    val currentTime = current.format(formatter) + "00"
-    val year = current.year.toString()
-    val month = "%02d".format(current.monthValue)
-    val day = "%02d".format(current.dayOfMonth)
-    val today = year + month + day
     val weatherData by weatherForecastViewModel.getAllCityWeather()
         .collectAsState(emptyList())
 
@@ -73,20 +67,19 @@ fun WeatherForecastScreen(
             items(weatherData) {
                 WeatherDataListItem(
                     weatherData = it,
-                    currentTime = currentTime,
-                    today = today,
-                    weatherForecastViewModel
+                    weatherForecastViewModel = weatherForecastViewModel
                 )
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherDataListItem(
     weatherData: WeatherData,
-    currentTime: String,
-    today: String,
+    currentTime: String = CurrentTime.currentTime,
+    today: String = CurrentTime.today,
     weatherForecastViewModel: WeatherForecastViewModel
 ) {
 

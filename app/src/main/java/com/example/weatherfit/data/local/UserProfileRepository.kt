@@ -21,6 +21,7 @@ class UserProfileRepository(private val dataStore: DataStore<Preferences>) {
         val USER_PURPOSE = stringPreferencesKey("user_purpose")
         val USER_BODY_TYPE = stringPreferencesKey("user_body_type")
         val USER_PREFERRED_STYLE = stringPreferencesKey("user_preferred_style")
+        val USER_SELECTED_AREA = stringPreferencesKey("user_selected_area")
         const val TAG = "UserProfileRepo"
     }
 
@@ -33,6 +34,24 @@ class UserProfileRepository(private val dataStore: DataStore<Preferences>) {
             preferences[USER_BODY_TYPE] = userProfile.bodyType
             preferences[USER_PREFERRED_STYLE] = userProfile.preferredStyle
         }
+    }
+
+    suspend fun saveUserSelectedArea(userSelectedArea: String) {
+        dataStore.edit { preferences ->
+            preferences[USER_SELECTED_AREA] = userSelectedArea
+
+        }
+    }
+
+    val userSelectedArea: Flow<String> = dataStore.data.catch {
+        if (it is IOException) {
+            Log.e(TAG, "Error reading preferences.", it)
+            emit(emptyPreferences())
+        } else {
+            throw it
+        }
+    }.map { preferences ->
+        preferences[USER_SELECTED_AREA] ?: ""
     }
 
     val userProfile: Flow<UserProfileUiState> = dataStore.data.catch {
@@ -52,5 +71,4 @@ class UserProfileRepository(private val dataStore: DataStore<Preferences>) {
 
         UserProfileUiState(name, age, sex, purpose, bodyType, preferredStyle)
     }
-
 }

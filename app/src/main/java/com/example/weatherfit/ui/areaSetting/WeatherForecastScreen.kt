@@ -1,13 +1,13 @@
 package com.example.weatherfit.ui.areaSetting
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,8 +18,7 @@ import com.example.weatherfit.data.local.WeatherData
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults.elevation
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.data.local.CurrentTime
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 /*
  room에 저장된 데이터는 과거 데이터이기 때문에 시간이 지나 데이터를 가져오면 오류발생
@@ -40,6 +37,7 @@ fun WeatherForecastScreen(
     onNavigateToAreaAdd: () -> Unit,
     weatherForecastViewModel: WeatherForecastViewModel = viewModel(factory = WeatherForecastViewModel.Factory),
 ) {
+    val selectedTown by weatherForecastViewModel.uiState.collectAsState()
     val weatherData by weatherForecastViewModel.getAllCityWeather()
         .collectAsState(emptyList())
 
@@ -64,10 +62,13 @@ fun WeatherForecastScreen(
         }
     ) {
         LazyColumn(modifier = Modifier.padding(it)) {
+
             items(weatherData) {
                 WeatherDataListItem(
                     weatherData = it,
-                    weatherForecastViewModel = weatherForecastViewModel
+                    weatherForecastViewModel = weatherForecastViewModel,
+                    selectedTown = selectedTown,
+                    onChangeSelectedTown = weatherForecastViewModel::saveUserSelectedArea,
                 )
             }
         }
@@ -80,9 +81,10 @@ fun WeatherDataListItem(
     weatherData: WeatherData,
     currentTime: String = CurrentTime.currentTime,
     today: String = CurrentTime.today,
-    weatherForecastViewModel: WeatherForecastViewModel
+    weatherForecastViewModel: WeatherForecastViewModel,
+    selectedTown: String,
+    onChangeSelectedTown: (String) -> Unit,
 ) {
-
     val currentTmp = weatherData.weatherData.filter {
         it.category == "TMP" && it.fcstTime == currentTime
     }.map {
@@ -110,6 +112,16 @@ fun WeatherDataListItem(
                 .padding(10.dp)
         ) {
             Row() {
+                RadioButton(
+                    selected = selectedTown == weatherData.townName,
+                    onClick = {
+                        onChangeSelectedTown(weatherData.townName)
+                    },
+                    enabled = true,
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colors.primary
+                    ),
+                )
                 Text(fontSize = 23.sp, text = weatherData.townName)
                 Spacer(Modifier.weight(1f))
                 Text(

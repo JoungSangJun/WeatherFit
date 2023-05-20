@@ -91,7 +91,7 @@ fun ClothRecommendCard() {
 }
 
 @Composable
-fun WeatherInformationCard(infoKind: String, value: String) {
+fun WeatherInformationCard(infoKind: String = "", value: String = "") {
     Card(
         modifier = Modifier
             .width(100.dp)
@@ -116,7 +116,7 @@ fun WeatherInformationCard(infoKind: String, value: String) {
 }
 
 @Composable
-fun TempCard(townName: String, tmp: String, tmpMax: String, tmpMin: String) {
+fun TempCard(townName: String = "", tmp: String = "", tmpMax: String = "", tmpMin: String = "") {
     Card(
         modifier = Modifier
             .width(300.dp)

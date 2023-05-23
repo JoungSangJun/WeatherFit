@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
-import com.example.weatherfit.data.local.CurrentTime
-
 
 val gradient = Brush.verticalGradient(
     colors = listOf(Color.DarkGray, Color.White),

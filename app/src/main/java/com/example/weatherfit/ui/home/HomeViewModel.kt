@@ -17,9 +17,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-/*
- data store에서 처음 값 가져오면 빈 값이라 nullpoint 에러남
- */
 class HomeViewModel(
     private val weatherDataDao: WeatherDataDao,
     private val userProfileRepository: UserProfileRepository

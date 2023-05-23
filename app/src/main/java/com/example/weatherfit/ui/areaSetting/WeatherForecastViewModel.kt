@@ -32,6 +32,11 @@ class WeatherForecastViewModel(
 
     fun deleteSelectedData(townName: String) = viewModelScope.launch {
         weatherDataDao.deleteSelectedData(townName)
+        userProfileRepository.userSelectedArea.collect {
+            if (townName == it) {
+                userProfileRepository.saveUserSelectedArea("")
+            }
+        }
     }
 
     fun saveUserSelectedArea(userSelectedArea: String) {

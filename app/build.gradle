@@ -79,9 +79,9 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
-    // navigation
+    // Navigation
     implementation "androidx.navigation:navigation-compose:2.5.3"
-    // dataStore
+    // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // Converter ( JSON 타입 결과를 객체로 매핑 )
@@ -92,4 +92,6 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.0"
     implementation "androidx.room:room-ktx:2.5.0"
     ksp "androidx.room:room-compiler:2.5.1"
+    // Worker
+    implementation "androidx.work:work-runtime-ktx:2.8.1"
 }

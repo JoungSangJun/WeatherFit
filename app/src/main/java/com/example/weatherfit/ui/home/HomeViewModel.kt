@@ -1,7 +1,6 @@
 package com.example.weatherfit.ui.home
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,15 +10,16 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weatherfit.WeatherFitApplication
 import com.example.weatherfit.data.local.CurrentTime
 import com.example.weatherfit.data.local.UserProfileRepository
-import com.example.weatherfit.data.local.WeatherData
 import com.example.weatherfit.data.local.WeatherDataDao
+import com.example.weatherfit.data.remote.workerData.ClothRecommendRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val weatherDataDao: WeatherDataDao,
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val clothRecommendRepository: ClothRecommendRepository
 ) : ViewModel() {
 
     private val _test: MutableStateFlow<String> = MutableStateFlow("")
@@ -32,6 +32,11 @@ class HomeViewModel(
             }
         }
     }
+
+    fun recommendCloth(question: String) = clothRecommendRepository.recommendCloth(question) {
+
+    }
+
 
     // 사용자가 선택한 지역의 기상 정보 가져오기
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -82,9 +87,12 @@ class HomeViewModel(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WeatherFitApplication)
+                val waterRepository =
+                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WeatherFitApplication).clothContainer.clothRecommendRepository
                 HomeViewModel(
                     weatherDataDao = application.weatherDatabase.weatherDataDao(),
-                    userProfileRepository = application.userPreferencesRepository
+                    userProfileRepository = application.userPreferencesRepository,
+                    clothRecommendRepository = waterRepository
                 )
             }
         }

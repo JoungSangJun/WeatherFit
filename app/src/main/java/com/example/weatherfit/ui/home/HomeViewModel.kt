@@ -1,6 +1,7 @@
 package com.example.weatherfit.ui.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +12,7 @@ import com.example.weatherfit.WeatherFitApplication
 import com.example.weatherfit.data.local.CurrentTime
 import com.example.weatherfit.data.local.UserProfileRepository
 import com.example.weatherfit.data.local.WeatherDataDao
-import com.example.weatherfit.data.remote.workerData.ClothRecommendRepository
+import com.example.weatherfit.data.remote.chatGpt.ChatGptRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,35 +20,39 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val weatherDataDao: WeatherDataDao,
     private val userProfileRepository: UserProfileRepository,
-    private val clothRecommendRepository: ClothRecommendRepository
+    private val chatGptRepository: ChatGptRepository
 ) : ViewModel() {
 
-    private val _test: MutableStateFlow<String> = MutableStateFlow("")
-    val test: StateFlow<String> = _test
+    private val userSelectedArea: MutableStateFlow<String> = MutableStateFlow("")
+    private val _clothRecommend: MutableStateFlow<String> = MutableStateFlow("")
+    val clothRecommend: StateFlow<String> = _clothRecommend
+
 
     init {
         viewModelScope.launch {
             userProfileRepository.userSelectedArea.collect {
-                _test.value = it
+                userSelectedArea.value = it
+
             }
         }
     }
 
-    fun recommendCloth(question: String) = clothRecommendRepository.recommendCloth(question) {
-
+    fun getRecommendCloth(question: String) {
+        viewModelScope.launch {
+            _clothRecommend.value = chatGptRepository.getRecommendCloth(question)
+        }
     }
-
 
     // 사용자가 선택한 지역의 기상 정보 가져오기
     @OptIn(ExperimentalCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
-    val homeUiState: Flow<HomeUiState> = test.flatMapLatest {
+    val homeUiState: Flow<HomeUiState> = userSelectedArea.flatMapLatest {
         if (it.isEmpty()) {
             weatherDataDao.getSelectedTownNameWeather("").map {
                 HomeUiState()
             }
         } else {
-            weatherDataDao.getSelectedTownNameWeather(test.value).map {
+            weatherDataDao.getSelectedTownNameWeather(userSelectedArea.value).map {
                 HomeUiState(
                     it.townName,
                     tmp = it.weatherData.filter { it.category == "TMP" && it.fcstTime == CurrentTime.currentTime }
@@ -76,7 +81,7 @@ class HomeViewModel(
                         it.category == "REH" && it.fcstTime == CurrentTime.currentTime
                     }.map {
                         it.fcstValue
-                    }.firstOrNull() ?: "0"
+                    }.firstOrNull() ?: "0",
                 )
             }
         }
@@ -87,12 +92,10 @@ class HomeViewModel(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WeatherFitApplication)
-                val waterRepository =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as WeatherFitApplication).clothContainer.clothRecommendRepository
                 HomeViewModel(
                     weatherDataDao = application.weatherDatabase.weatherDataDao(),
                     userProfileRepository = application.userPreferencesRepository,
-                    clothRecommendRepository = waterRepository
+                    chatGptRepository = application.chatGptRepository
                 )
             }
         }
@@ -106,5 +109,5 @@ data class HomeUiState(
     val tmpMin: String = "",
     val windSpeed: String = "",
     val rainPercent: String = "",
-    val humidity: String = ""
+    val humidity: String = "",
 )

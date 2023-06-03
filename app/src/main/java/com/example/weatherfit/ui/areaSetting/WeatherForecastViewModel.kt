@@ -11,7 +11,6 @@ import com.example.weatherfit.WeatherFitApplication
 import com.example.weatherfit.data.local.UserProfileRepository
 import com.example.weatherfit.data.local.WeatherData
 import com.example.weatherfit.data.local.WeatherDataDao
-import com.example.weatherfit.ui.profile.UserProfileUiState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

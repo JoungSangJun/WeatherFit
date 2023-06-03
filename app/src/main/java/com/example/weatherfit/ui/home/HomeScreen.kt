@@ -6,9 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
 
+// 날씨에 따라 해, 비, 구름 등 이미지 변경되어야함
+
 val gradient = Brush.verticalGradient(
     colors = listOf(Color.DarkGray, Color.White),
     startY = 0.0f,
@@ -34,6 +34,7 @@ val gradient = Brush.verticalGradient(
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)) {
     val homeUiState by homeViewModel.homeUiState.collectAsState(initial = HomeUiState())
+    val clothRecommend by homeViewModel.clothRecommend.collectAsState()
 
     Box(
         modifier = Modifier
@@ -58,14 +59,16 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.
                 Spacer(modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.weight(1f))
-            ClothRecommendCard()
+            ClothRecommendCard(clothRecommend) { question ->
+                homeViewModel.getRecommendCloth(question)
+            }
             Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-fun ClothRecommendCard() {
+fun ClothRecommendCard(clothRecommend: String, question: (String) -> Unit) {
     Card(
         modifier = Modifier
             .width(300.dp)
@@ -74,17 +77,28 @@ fun ClothRecommendCard() {
         backgroundColor = Color.White,
         shape = RoundedCornerShape(40.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+
+        Column(
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Text("반 팔", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            Spacer(modifier = Modifier.weight(1f))
-            Text("긴바지", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            Spacer(modifier = Modifier.weight(1f))
-            Text("가디건", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            Spacer(modifier = Modifier.weight(1f))
+            Row() {
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { question("how are you") },
+                    modifier = Modifier.padding(end = 10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_refresh_24),
+                        contentDescription = "Button Icon",
+                        tint = Color.Black
+                    )
+                }
+            }
+            Text(
+                clothRecommend.trim(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(10.dp)
+            )
         }
     }
 }

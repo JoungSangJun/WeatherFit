@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherfit.R
+import com.example.weatherfit.ui.profile.UserProfileUiState
 
 // 날씨에 따라 해, 비, 구름 등 이미지 변경되어야함
 
@@ -35,6 +38,7 @@ val gradient = Brush.verticalGradient(
 fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)) {
     val homeUiState by homeViewModel.homeUiState.collectAsState(initial = HomeUiState())
     val clothRecommend by homeViewModel.clothRecommend.collectAsState()
+    val userProfile = homeViewModel.userProfile.collectAsState().value
 
     Box(
         modifier = Modifier
@@ -59,8 +63,12 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.
                 Spacer(modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.weight(1f))
-            ClothRecommendCard(clothRecommend) { question ->
-                homeViewModel.getRecommendCloth(question)
+            ClothRecommendCard(
+                clothRecommend,
+                homeUiState,
+                userProfile
+            ) { userProfile, weatherData ->
+                homeViewModel.makeQuestionForChatGpt(userProfile, weatherData)
             }
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -68,10 +76,15 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.
 }
 
 @Composable
-fun ClothRecommendCard(clothRecommend: String, question: (String) -> Unit) {
+fun ClothRecommendCard(
+    clothRecommend: String,
+    homeUiState: HomeUiState,
+    userProfile: UserProfileUiState,
+    makeQuestionForChatGpt: (UserProfileUiState, HomeUiState) -> Unit
+) {
     Card(
         modifier = Modifier
-            .width(300.dp)
+            .width(350.dp)
             .height(150.dp)
             .alpha(0.8f),
         backgroundColor = Color.White,
@@ -79,11 +92,14 @@ fun ClothRecommendCard(clothRecommend: String, question: (String) -> Unit) {
     ) {
 
         Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 10.dp)
         ) {
             Row() {
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
-                    onClick = { question("how are you") },
+                    onClick = { makeQuestionForChatGpt(userProfile, homeUiState) },
                     modifier = Modifier.padding(end = 10.dp)
                 ) {
                     Icon(
@@ -97,7 +113,7 @@ fun ClothRecommendCard(clothRecommend: String, question: (String) -> Unit) {
                 clothRecommend.trim(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.padding(start = 20.dp, bottom = 10.dp, end = 10.dp)
             )
         }
     }

@@ -25,7 +25,7 @@ class NetworkChatGptRepository : ChatGptRepository {
             {
             "prompt": "$question",
             "max_tokens": 500,
-            "temperature": 0
+            "temperature": 0.4
             }
         """.trimIndent()
 

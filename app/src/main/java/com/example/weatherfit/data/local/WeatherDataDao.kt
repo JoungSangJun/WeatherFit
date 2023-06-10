@@ -13,6 +13,7 @@ interface WeatherDataDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(weatherData: WeatherData)
 
+    // 지역중복체크
     @Transaction
     suspend fun insertWithDupCheck(weatherData: WeatherData, context: Context) {
         val count = checkDuplication(weatherData.townName)

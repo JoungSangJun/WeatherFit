@@ -3,6 +3,7 @@ package com.example.weatherfit.ui.home
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.example.weatherfit.data.local.CurrentTime
 import com.example.weatherfit.data.local.UserProfileRepository
 import com.example.weatherfit.data.local.WeatherDataDao
 import com.example.weatherfit.data.remote.chatGpt.ChatGptRepository
+import com.example.weatherfit.ui.profile.UserProfileUiState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,20 +26,24 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val userSelectedArea: MutableStateFlow<String> = MutableStateFlow("")
+    val userProfile: StateFlow<UserProfileUiState> = userProfileRepository.userProfile.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UserProfileUiState()
+    )
+
     private val _clothRecommend: MutableStateFlow<String> = MutableStateFlow("")
     val clothRecommend: StateFlow<String> = _clothRecommend
-
 
     init {
         viewModelScope.launch {
             userProfileRepository.userSelectedArea.collect {
                 userSelectedArea.value = it
-
             }
         }
     }
 
-    fun getRecommendCloth(question: String) {
+    private fun getRecommendCloth(question: String) {
         viewModelScope.launch {
             _clothRecommend.value = chatGptRepository.getRecommendCloth(question)
         }
@@ -85,6 +91,17 @@ class HomeViewModel(
                 )
             }
         }
+    }
+
+    // chat GPT에게 물어볼 질문 생성
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun makeQuestionForChatGpt(userProfile: UserProfileUiState, weatherData: HomeUiState) {
+        val question: String =
+            userProfile.age + "살" + userProfile.sex + userProfile.purpose + "목적" +
+                    userProfile.bodyType + "체형" + userProfile.preferredStyle + "스타일" +
+                    "최고기온" + weatherData.tmpMax + "최저기온" + weatherData.tmpMin +
+                    weatherData.tmp + "도에서 옷 색상과 함께 상의 하의 신발 1개씩 추천해"
+        getRecommendCloth(question)
     }
 
     companion object {
